@@ -28,4 +28,7 @@ func main() {
 	}
 
 	rMux.NotFoundHandler = http.HandlerFunc(DefaultHandler)
+
+	notAllowed := notAllowedHandler{}
+	rMux.MethodNotAllowedHandler = notAllowed
 }
