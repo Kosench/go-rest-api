@@ -31,4 +31,7 @@ func main() {
 
 	notAllowed := notAllowedHandler{}
 	rMux.MethodNotAllowedHandler = notAllowed
+
+	rMux.HandleFunc("/time", TimeHandler)
+
 }
