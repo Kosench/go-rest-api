@@ -34,3 +34,7 @@ func TimeHandler(rw http.ResponseWriter, r *http.Request) {
 	Body := "The current time is: " + t + "\n"
 	fmt.Fprintf(rw, "%s", Body)
 }
+
+func GetAllHandler(rw http.ResponseWriter, r *http.Request) {
+	log.Println("GetAllHandler Serving:", r.URL.Path, "from", r.Host)
+}
