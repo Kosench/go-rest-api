@@ -246,6 +246,51 @@ func UpdateHandler(rw http.ResponseWriter, r *http.Request) {
 	rw.WriteHeader(http.StatusOK)
 }
 
+func LoginHandler(rw http.ResponseWriter, r *http.Request) {
+	log.Println("LoginHandler Serving:", r.URL.Path, "from", r.Host)
+	d, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Println(err)
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if len(d) == 0 {
+		rw.WriteHeader(http.StatusBadRequest)
+		log.Println("No input!")
+		return
+	}
+
+	var user = restdb.User{}
+	err = json.Unmarshal(d, &user)
+	if err != nil {
+		log.Println(err)
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	log.Println("Input user:", user)
+
+	if !restdb.IsUserValid(user) {
+		log.Println("User", user.Username, "not valid")
+		return
+	}
+
+	t := restdb.FindUserUsername(user.Username)
+	log.Println("Logging in:", t)
+
+	t.LastLogin = time.Now().Unix()
+	t.Active = 1
+	if restdb.UpdateUser(t) {
+		log.Println("User updated: ", t)
+		rw.WriteHeader(http.StatusOK)
+	} else {
+		log.Println("Update failed:", t)
+		rw.WriteHeader(http.StatusBadRequest)
+	}
+
+}
+
 func LoggedUsersHandler(rw http.ResponseWriter, r *http.Request) {
 	log.Println("LoggedUsersHandler Serving:", r.URL.Path, "from", r.Host)
 	var user = restdb.User{}
