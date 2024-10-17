@@ -379,7 +379,7 @@ func LogoutHandler(rw http.ResponseWriter, r *http.Request) {
 	t := restdb.FindUserUsername(user.Username)
 	log.Println("Logging out: ", t.Username)
 	t.Active = 0
-	if restdb.UpdateUser(user) {
+	if restdb.UpdateUser(t) {
 		log.Println("User updated:", t)
 		rw.WriteHeader(http.StatusOK)
 	} else {
