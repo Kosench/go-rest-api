@@ -43,4 +43,13 @@ func main() {
 
 	putMux := rMux.Methods(http.MethodPut).Subrouter()
 	putMux.HandleFunc("/update", UpdateHandler)
+
+	postMux := rMux.Methods(http.MethodPost).Subrouter()
+	postMux.HandleFunc("/add", AddHandler)
+	postMux.HandleFunc("/login", LoginHandler)
+	postMux.HandleFunc("/logout", LogoutHandler)
+
+	deleteMux := rMux.Methods(http.MethodDelete).Subrouter()
+	deleteMux.HandleFunc("/username/{id:[0-9]+}", DeleteHandler)
+
 }
