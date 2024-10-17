@@ -2,8 +2,10 @@ package main
 
 import (
 	"github.com/gorilla/mux"
+	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"time"
 ) // Create a new ServeMux using Gorilla
 
@@ -52,4 +54,18 @@ func main() {
 	deleteMux := rMux.Methods(http.MethodDelete).Subrouter()
 	deleteMux.HandleFunc("/username/{id:[0-9]+}", DeleteHandler)
 
+	go func() {
+		log.Println("listening to ", PORT)
+		err := s.ListenAndServe()
+		if err != nil {
+			log.Printf("Error starting server: %s\n", err)
+			return
+		}
+	}()
+	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, os.Interrupt)
+	sig := <-sigs
+	log.Println("Quitting after signal:", sig)
+	time.Sleep(5 * time.Second)
+	s.Shutdown(nil)
 }
