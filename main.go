@@ -40,4 +40,7 @@ func main() {
 	getMux.HandleFunc("/getid/{username}", GetIDHandler)
 	getMux.HandleFunc("/logged", LoggedUsersHandler)
 	getMux.HandleFunc("/username/{id:[0-9]+}", GetUserDataHandler)
+
+	putMux := rMux.Methods(http.MethodPut).Subrouter()
+	putMux.HandleFunc("/update", UpdateHandler)
 }
