@@ -60,7 +60,7 @@ func GetAllHandler(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	var user = restdb.User{}
-	err := json.Unmarshal(d, &user)
+	err = json.Unmarshal(d, &user)
 	if err != nil {
 		log.Println(err)
 		rw.WriteHeader(http.StatusBadRequest)
@@ -129,5 +129,30 @@ func GetIDHandler(rw http.ResponseWriter, r *http.Request) {
 	} else {
 		rw.WriteHeader(http.StatusNotFound)
 		log.Println("User " + user.Username + "not found")
+	}
+}
+
+func LoggedUsersHandler(rw http.ResponseWriter, r *http.Request) {
+	log.Println("LoggedUsersHandler Serving:", r.URL.Path, "from", r.Host)
+	var user = restdb.User{}
+
+	err := user.FromJSON(r.Body)
+	if err != nil {
+		log.Println(err)
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if !restdb.IsUserValid(user) {
+		log.Println("User", user.Username, "does not exist or is invalid!")
+		rw.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	err = SliceToJSON(restdb.ReturnLoggedUsers(), rw)
+	if err != nil {
+		log.Println(err)
+		rw.WriteHeader(http.StatusBadRequest)
+		return
 	}
 }
